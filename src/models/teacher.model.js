@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose"
-new teacherSchema = new mongoose.Schema({
+const teacherSchema = new mongoose.Schema({
   TeacherID : {
     type : String,
     required : true,

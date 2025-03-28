@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose"
-new tpoSchema = new mongoose.Schema({
+import bcrypt from "bcrypt"
+
+const tpoSchema = new mongoose.Schema({
   email : {
     type : String,
     required : true,

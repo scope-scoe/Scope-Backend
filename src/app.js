@@ -16,12 +16,16 @@ app.use(cookieParser());
 
 
 //routes import
-import userRouter from './routes/user.routes.js'
-
+import studentRouter from './routes/student.routes.js'
+import teacherRouter from './routes/teacher.routes.js'
+import tpcRouter from './routes/tpc.routes.js'
+import tpoRouter from './routes/tpo.routes.js'
 
 //routes declaration
-app.use("/api/v1/users",userRouter)
-
+app.use("/api/v1/student",studentRouter)
+app.use("/api/v1/teacher",teacherRouter)
+app.use("/api/v1/tpc",tpcRouter)
+app.use("/api/v1/tpo",tpoRouter)
 
 
 

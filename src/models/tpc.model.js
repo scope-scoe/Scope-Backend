@@ -4,25 +4,42 @@ import mongoose from "mongoose";
 
 const tpcSchema = new mongoose.Schema(
   {
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: true,
-      unique: true
-    },
-    email : {
+    PRN: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    Name: {
+      type: String,
+      required: true,
+    },
+    Roll_Number: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    Year: {
+      type: String,
+      required: true,
+      enum: [1, 2, 3, 4],
+    },
+    Division: {
+      type: String,
+      required: true,
+    },
+    Department : {
+    type : String,
+    required : true
     },
     password: {
       type: String,
       required: true,
-      unique : true
-    },
-    Division: {
-      type: String,
-      required: true
     },
     refreshToken:{
       type: String
