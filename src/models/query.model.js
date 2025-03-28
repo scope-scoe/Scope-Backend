@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-const placement_querySchema = new mongoose.Schema({
+const querySchema = new mongoose.Schema({
   student: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Student",
@@ -39,7 +39,7 @@ const placement_querySchema = new mongoose.Schema({
   },
 },{timestamps : true})
 
-export const placement_query = mongoose.model(
-  'placement_query',
-  placement_querySchema
+export const Query = mongoose.model(
+  'Query',
+  querySchema
 );

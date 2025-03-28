@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import {Student} from "../models/student.model.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
+import { Query } from "../models/query.model.js";
 
 export const options={
     httpOnly:true,
@@ -118,4 +119,29 @@ const logoutStudent=asyncHandler(async(req,res)=>{
   .clearCookie("refreshToken",options)
   .json(new ApiResponse(200,{},"Student logged Out Successfully"))
 })
-export {registerStudent,loginStudent,logoutStudent};
+
+const createQuery=asyncHandler(async(req,res)=>{
+  const {queryText}=req.body;
+  if(
+      [queryText].some((field)=>!field||field.trim()==="")
+    ){
+      throw new ApiError(400,"All fields are required")
+    }
+
+  const query=await Query.create({
+      queryText,
+      student:req.user._id
+    })
+
+    const createdQuery=await Query.findById(query._id)
+    
+      if(!createQuery){
+        throw new ApiError(500,"Something went wrong while creating event")
+      }
+
+    return res.status(201).json(
+      new ApiResponse(200,createdQuery,"Query created Successfully")
+    )
+})
+
+export {registerStudent,loginStudent,logoutStudent,createQuery};
