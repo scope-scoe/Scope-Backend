@@ -10,7 +10,7 @@ router.route("/login").post(loginTeacher);
 
 //secured routes
 router.route("/logout").post(verifyJWT,logoutTeacher);
-router.route("/createEvent").post(upload.fields([
+router.route("/createEvent").post(verifyJWT,upload.fields([
   {
     name:"poster",
     maxCount:1

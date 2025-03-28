@@ -15,7 +15,7 @@ const eventSchema = new mongoose.Schema(
       default: [],
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
     time: {
@@ -25,6 +25,9 @@ const eventSchema = new mongoose.Schema(
     venue: {
       type: String,
       required: true,
+    },
+    poster:{
+      type:String
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

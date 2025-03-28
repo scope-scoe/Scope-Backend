@@ -2,7 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {Teacher} from "../models/teacher.model.js"
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import { Event } from "../models/event.model.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const options={
     httpOnly:true,
@@ -117,6 +118,37 @@ const logoutTeacher=asyncHandler(async(req,res)=>{
 })
 
 const createEvent=asyncHandler(async(req,res)=>{
+  const {title,description,date,time,venue}=req.body;
+  if(
+      [title,description,date,time,venue].some((field)=>!field||field.trim()==="")
+    ){
+      throw new ApiError(400,"All fields are required")
+    }
 
+  
+  const posterLocalPath=req.files?.poster[0]?.path;
+
+  const poster=await uploadOnCloudinary(posterLocalPath);
+
+
+  const event=await Event.create({
+    title,
+    description,
+    date,
+    time,
+    venue,
+    poster:poster?.url||"",
+    createdBy:req.user._id
+  })
+
+  const createdEvent=await Event.findById(event._id)
+
+  if(!createEvent){
+    throw new ApiError(500,"Something went wrong while creating event")
+  }
+
+  return res.status(201).json(
+      new ApiResponse(200,createdEvent,"Student Registered Successfully")
+    )
 })
 export {registerTeacher,createEvent,loginTeacher,logoutTeacher};
