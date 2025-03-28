@@ -3,7 +3,27 @@ import { TPC } from "../models/tpc.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-const registerTpc=asyncHandler(
+export const options={
+    httpOnly:true,
+    secure:true
+}
+
+export const generateAccessAndRefreshTokens=async(TPCId)=>{
+  try {
+    const tpc=await TPC.findById(TPCId);
+    const accessToken=tpc.generateAccessToken();
+    const refreshToken=tpc.generateRefreshToken();
+
+    tpc.refreshToken=refreshToken
+    await tpc.save({validateBeforeSave:false})
+
+    return {accessToken,refreshToken}
+  } catch (error) {
+    throw new ApiError(500,"Something went wrong while generating refresh and access tokens")
+  }
+}
+
+const registerTPC=asyncHandler(
   async(req,res)=>{
     const { PRN, email, Name, Roll_Number, Year, Division, Department, password } = req.body;
     console.log(email);
@@ -43,4 +63,59 @@ const registerTpc=asyncHandler(
   }
 )
 
-export {registerTpc};
+const loginTPC=asyncHandler(async(req,res)=>{
+  const{email,password}=req.body;
+  if(!email){
+    throw new ApiError(400,"email is required")
+  }
+
+  const tpc=await TPC.findOne({email})
+  if(!tpc){
+    throw new ApiError(404,"TPC does not exist")
+  }
+
+  const isPasswordValid=await tpc.isPasswordCorrect(password)
+
+  if(!isPasswordValid){
+    throw new ApiError(401,"Password incorrect")
+  }
+
+  const{accessToken,refreshToken}=await  generateAccessAndRefreshTokens(tpc._id);
+
+  const loggedInTPC=await TPC.findById(tpc._id).select("-password -refreshToken");
+  console.log(loggedInTPC);
+  return res
+  .status(200)
+  .cookie("accessToken",accessToken,options)
+  .cookie("refreshToken",refreshToken,options).json(
+    new ApiResponse(200,
+      {
+        TPC:loggedInTPC,
+        accessToken,
+        refreshToken
+      },
+      "TPC logged in successfully"
+    )
+  )
+
+})
+
+const logoutTPC=asyncHandler(async(req,res)=>{
+  await TPC.findByIdAndUpdate(req.user._id,
+    {
+      $set:{
+        refreshToken:undefined
+      }
+    },
+    {
+      new:true
+    }
+  )
+  return res
+  .status(200)
+  .clearCookie("accessToken",options)
+  .clearCookie("refreshToken",options)
+  .json(new ApiResponse(200,{},"TPC logged Out Successfully"))
+})
+
+export {registerTPC,loginTPC,logoutTPC};

@@ -60,6 +60,7 @@ studentSchema.methods.isPasswordCorrect=async function(password){
 studentSchema.methods.generateAccessToken=function(){
   return jwt.sign(
     {
+      userType:"Student",
       _id:this._id,
       email:this.email
     },
@@ -73,6 +74,7 @@ studentSchema.methods.generateAccessToken=function(){
 studentSchema.methods.generateRefreshToken=function(){
   return jwt.sign(
     {
+      userType:"Student",
       _id:this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,

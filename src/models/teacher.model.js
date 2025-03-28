@@ -44,6 +44,7 @@ teacherSchema.methods.isPasswordCorrect=async function(password){
 teacherSchema.methods.generateAccessToken=function(){
   return jwt.sign(
     {
+      userType:"Teacher",
       _id:this._id,
       email:this.email
     },
@@ -57,6 +58,7 @@ teacherSchema.methods.generateAccessToken=function(){
 teacherSchema.methods.generateRefreshToken=function(){
   return jwt.sign(
     {
+      userType:"Teacher",
       _id:this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,

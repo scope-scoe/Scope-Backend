@@ -31,6 +31,7 @@ tpoSchema.methods.isPasswordCorrect=async function(password){
 tpoSchema.methods.generateAccessToken=function(){
   return jwt.sign(
     {
+      userType:"TPO",
       _id:this._id,
       email:this.email
     },
@@ -44,6 +45,7 @@ tpoSchema.methods.generateAccessToken=function(){
 tpoSchema.methods.generateRefreshToken=function(){
   return jwt.sign(
     {
+      userType:"TPO",
       _id:this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,

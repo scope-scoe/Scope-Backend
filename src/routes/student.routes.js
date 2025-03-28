@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { registerStudent} from "../controllers/student.controller.js";
+import { registerStudent,loginStudent,logoutStudent} from "../controllers/student.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router=Router() ;
 
 router.route("/register").post(registerStudent);
+router.route("/login").post(loginStudent);
+
+//secured routes
+router.route("/logout").post(verifyJWT,logoutStudent);
+
 export default router;

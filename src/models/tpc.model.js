@@ -61,6 +61,7 @@ tpcSchema.methods.isPasswordCorrect=async function(password){
 tpcSchema.methods.generateAccessToken=function(){
   return jwt.sign(
     {
+      userType:"TPC",
       _id:this._id,
       email:this.email
     },
@@ -74,6 +75,7 @@ tpcSchema.methods.generateAccessToken=function(){
 tpcSchema.methods.generateRefreshToken=function(){
   return jwt.sign(
     {
+      userType:"TPC",
       _id:this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
