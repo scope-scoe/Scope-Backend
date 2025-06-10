@@ -26,15 +26,17 @@ const studentSchema = new mongoose.Schema(
     Year: {
       type: String,
       required: true,
-      enum: [1, 2, 3, 4],
+      enum: ["First Year", "Second Year", "Third Year", "Final Year"],
     },
     Division: {
       type: String,
       required: true,
+      enum:['I', 'II', 'III']
     },
     Department : {
     type : String,
-    required : true
+    required : true,
+    enum: ["Computer Science", "Information Technology", "Electronics and Telecommunication", "Mechanical Engineering", "Civil Engineering"]
     },
     password: {
       type: String,

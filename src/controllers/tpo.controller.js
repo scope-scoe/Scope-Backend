@@ -25,10 +25,10 @@ export const generateAccessAndRefreshTokens=async(TPOId)=>{
 
 const registerTPO=asyncHandler(
   async(req,res)=>{
-    const { email, password } = req.body;
+    const { Name,email, password } = req.body;
     console.log(email);
     if(
-      [email,password].some((field)=>!field||field.trim()==="")
+      [Name,email,password].some((field)=>!field||field.trim()==="")
     ){
       throw new ApiError(400,"All fields are required")
     }
@@ -41,6 +41,7 @@ const registerTPO=asyncHandler(
     }
 
     const Tpo=await TPO.create({
+      Name,
       email,
       password
     })
