@@ -12,12 +12,16 @@ const querySchema = new mongoose.Schema({
   category: {
     type: String,
     enum: [
-      "Internship",
-      "Job Placement",
-      "Aptitude Preparation",
-      "Technical Preparation",
-      "Resume Review",
-      "Other"
+      "Internships",
+      "Company Details",
+      "Technical Questions",
+      "Eligibility",
+      "Resume Help",
+      "Job Openings",
+      "Application",
+      "Interview Tips",
+      "Placement Process",
+      "General Queries"
     ],
     default: "Other"
   },
@@ -33,9 +37,8 @@ const querySchema = new mongoose.Schema({
     default: null
   },
   escalatedToTPO: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "TPO",
-    default: null
+    type: Boolean,
+    default: false
   },
 },{timestamps : true})
 

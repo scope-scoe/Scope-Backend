@@ -3,7 +3,7 @@ import {ApiError} from "../utils/ApiError.js"
 import {Student} from "../models/student.model.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { Query } from "../models/query.model.js";
-
+import getCategory from "../ML models/bert.js";
 export const options={
     httpOnly:true,
     secure:true
@@ -27,7 +27,7 @@ export const generateAccessAndRefreshTokens=async(StudentId)=>{
 const registerStudent=asyncHandler(
   async(req,res)=>{
     const { PRN, email, Name, Roll_Number, Year, Division, Department, password } = req.body;
-    console.log(email);
+    console.log(PRN, email, Name, Roll_Number, Year, Division, Department, password );
     if(
       [Name,email,PRN,Roll_Number,Year,Division,Department,password].some((field)=>!field||field.trim()==="")
     ){
@@ -51,7 +51,7 @@ const registerStudent=asyncHandler(
       Department,
       password
     })
-
+    console.log(student);
     const createdStudent=await Student.findById(student._id).select("-password -refreshToken")
 
     if(!createdStudent){
@@ -70,7 +70,7 @@ const loginStudent=asyncHandler(async(req,res)=>{
   if(!email){
     throw new ApiError(400,"email is required")
   }
-
+  console.log(email, password);
   const student=await Student.findOne({email})
   if(!student){
     throw new ApiError(404,"Student does not exist")
@@ -92,14 +92,15 @@ const loginStudent=asyncHandler(async(req,res)=>{
   .cookie("refreshToken",refreshToken,options).json(
     new ApiResponse(200,
       {
-        Student:loggedInStudent,
+        userRole:"student",
+        user:loggedInStudent,
         accessToken,
         refreshToken
       },
       "Student logged in successfully"
     )
   )
-
+  
 })
 
 const logoutStudent=asyncHandler(async(req,res)=>{
@@ -127,9 +128,12 @@ const createQuery=asyncHandler(async(req,res)=>{
     ){
       throw new ApiError(400,"All fields are required")
     }
-
+    console.log(queryText);
+    const category=await getCategory(queryText);
+    console.log(category);
   const query=await Query.create({
       queryText,
+      category,
       student:req.user._id
     })
 

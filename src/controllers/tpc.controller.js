@@ -90,7 +90,8 @@ const loginTPC=asyncHandler(async(req,res)=>{
   .cookie("refreshToken",refreshToken,options).json(
     new ApiResponse(200,
       {
-        TPC:loggedInTPC,
+        userRole:'tpc',
+        user:loggedInTPC,
         accessToken,
         refreshToken
       },

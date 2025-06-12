@@ -85,7 +85,8 @@ const loginTPO=asyncHandler(async(req,res)=>{
   .cookie("refreshToken",refreshToken,options).json(
     new ApiResponse(200,
       {
-        TPO:loggedInTPO,
+        userRole:'tpo',
+        user:loggedInTPO,
         accessToken,
         refreshToken
       },

@@ -36,7 +36,7 @@ const studentSchema = new mongoose.Schema(
     Department : {
     type : String,
     required : true,
-    enum: ["Computer Science", "Information Technology", "Electronics and Telecommunication", "Mechanical Engineering", "Civil Engineering"]
+    enum: ["Computer Engineering", "Information Technology", "Electronics and Telecommunication", "Mechanical Engineering", "Civil Engineering"]
     },
     password: {
       type: String,

@@ -4,10 +4,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Event } from "../models/event.model.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import getKeywords from "../ML models/keybert.js";
 
 const options={
     httpOnly:true,
-    secure:true
+    secure:true,
+    sameSite:'None'
 }
 
 const generateAccessAndRefreshTokens=async(TeacherId)=>{
@@ -89,7 +91,8 @@ const loginTeacher=asyncHandler(async(req,res)=>{
   .cookie("refreshToken",refreshToken,options).json(
     new ApiResponse(200,
       {
-        Teacher:loggedInTeacher,
+        userRole:'teacher',
+        user:loggedInTeacher,
         accessToken,
         refreshToken
       },
@@ -110,6 +113,7 @@ const logoutTeacher=asyncHandler(async(req,res)=>{
       new:true
     }
   )
+  console.log("zatu logout");
   return res
   .status(200)
   .clearCookie("accessToken",options)
@@ -119,23 +123,25 @@ const logoutTeacher=asyncHandler(async(req,res)=>{
 
 const createEvent=asyncHandler(async(req,res)=>{
   const {title,description,date,time,venue}=req.body;
+  console.log(title, description, date, time, venue);
   if(
       [title,description,date,time,venue].some((field)=>!field||field.trim()==="")
     ){
       throw new ApiError(400,"All fields are required")
     }
-
-  
+  const keywords=await getKeywords(title+" "+description);
+  console.log(keywords);
   const posterLocalPath=req.files?.poster[0]?.path;
-
+  console.log(posterLocalPath);
   const poster=await uploadOnCloudinary(posterLocalPath);
-
+  
 
   const event=await Event.create({
     title,
     description,
     date,
     time,
+    keywords,
     venue,
     poster:poster?.url||"",
     createdBy:req.user._id
@@ -148,7 +154,7 @@ const createEvent=asyncHandler(async(req,res)=>{
   }
 
   return res.status(201).json(
-      new ApiResponse(200,createdEvent,"Student Registered Successfully")
+      new ApiResponse(200,createdEvent,"Event Created Successfully")
     )
 })
 export {registerTeacher,createEvent,loginTeacher,logoutTeacher};

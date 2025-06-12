@@ -27,23 +27,31 @@ const tpcSchema = new mongoose.Schema(
     Year: {
       type: String,
       required: true,
-      enum: [1, 2, 3, 4],
+      enum: ["First Year", "Second Year", "Third Year", "Final Year"],
     },
     Division: {
       type: String,
       required: true,
+      enum: ["I", "II", "III"],
     },
-    Department : {
-    type : String,
-    required : true
+    Department: {
+      type: String,
+      required: true,
+      enum: [
+        "Computer Engineering",
+        "Information Technology",
+        "Electronics and Telecommunication",
+        "Mechanical Engineering",
+        "Civil Engineering",
+      ],
     },
     password: {
       type: String,
       required: true,
     },
-    refreshToken:{
-      type: String
-    }
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
