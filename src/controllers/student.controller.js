@@ -3,6 +3,8 @@ import {ApiError} from "../utils/ApiError.js"
 import {Student} from "../models/student.model.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { Query } from "../models/query.model.js";
+import { EventRegistration } from "../models/registration.model.js";
+import { Event } from "../models/event.model.js";
 import getCategory from "../ML models/bert.js";
 export const options={
     httpOnly:true,
@@ -148,4 +150,43 @@ const createQuery=asyncHandler(async(req,res)=>{
     )
 })
 
-export {registerStudent,loginStudent,logoutStudent,createQuery};
+const registerForEvent=asyncHandler(async(req,res)=>{
+  const {eventId}=req.body;
+  if(!eventId){
+    throw new ApiError(400,"Event ID is required")
+  }
+  EventRegistration.create({
+    student:req.user._id,
+    event:eventId
+  })
+  return res.status(200).json(
+    new ApiResponse(200,{},`Registered for event successfully`)
+  )
+})
+
+const getCreatedQueries=asyncHandler(async(req,res)=>{
+  const queries = await Query.find({student:req.user._id})
+    .populate("student", "Name email");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, queries, "Your queries fetched successfully"));
+})
+
+const getAllRegisteredEvents=asyncHandler(async(req,res)=>{
+  const registrations=await EventRegistration.find({student:req.user._id}).populate("event").sort({createdAt:-1});
+
+  const events = registrations.map((reg) => reg.event);
+
+  return res.status(200).json(
+    new ApiResponse(200,events,"Events fetched successfully")
+  )
+})
+
+const getAllEvents=asyncHandler(async(req,res)=>{
+  const events=await Event.find().populate("createdBy","Name email").sort({createdAt:-1});
+    return res.status(200).json(
+      new ApiResponse(200,events,"Events fetched successfully")
+    )
+})
+
+export {registerStudent,loginStudent,logoutStudent,createQuery,registerForEvent,getCreatedQueries,getAllRegisteredEvents,getAllEvents};

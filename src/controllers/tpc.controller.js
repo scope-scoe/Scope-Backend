@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { TPC } from "../models/tpc.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import { Query } from "../models/query.model.js";
 export const options={
     httpOnly:true,
     secure:true
@@ -101,6 +101,57 @@ const loginTPC=asyncHandler(async(req,res)=>{
 
 })
 
+const getAllQueries=asyncHandler(async(req,res)=>
+{
+  const queries = await Query.find()
+    .populate("student", "Name email");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, queries, "All queries fetched successfully"));
+})
+
+const escalateQuery=asyncHandler(async(req,res)=>{
+  const {queryId}=req.body;
+  if(!queryId){
+    throw new ApiError(400,"Query ID is required")
+  }
+  const query=await Query.findById(queryId);
+  if(!query){
+    throw new ApiError(404,"Query not found")
+  }
+  if(query.status==="Escalated"){
+    throw new ApiError(400,"Query is already escalated")
+  }
+  if(query.status==="Resolved"){
+    throw new ApiError(400,"Query is already resolved")
+  }
+  query.status="Escalated";
+  query.escalatedToTPO = true;
+  await query.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, query, "Query escalated successfully"));
+})
+
+const resolveQuery=asyncHandler(async(req,res)=>{
+  const {queryId}=req.body;
+  if(!queryId){
+    throw new ApiError(400,"Query ID is required")
+  }
+  const query=await Query.findById(queryId);
+  if(!query){
+    throw new ApiError(404,"Query not found")
+  } 
+  if(query.status==="Resolved"){
+    throw new ApiError(400,"Query is already resolved")
+  }
+  query.status="Resolved";
+  await query.save(); 
+  return res
+    .status(200)
+    .json(new ApiResponse(200, query, "Query resolved successfully"));
+})
+
 const logoutTPC=asyncHandler(async(req,res)=>{
   await TPC.findByIdAndUpdate(req.user._id,
     {
@@ -119,4 +170,4 @@ const logoutTPC=asyncHandler(async(req,res)=>{
   .json(new ApiResponse(200,{},"TPC logged Out Successfully"))
 })
 
-export {registerTPC,loginTPC,logoutTPC};
+export {registerTPC,loginTPC,logoutTPC,getAllQueries,escalateQuery,resolveQuery};

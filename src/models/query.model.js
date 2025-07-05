@@ -21,7 +21,8 @@ const querySchema = new mongoose.Schema({
       "Application",
       "Interview Tips",
       "Placement Process",
-      "General Queries"
+      "General Queries",
+      "Other"
     ],
     default: "Other"
   },

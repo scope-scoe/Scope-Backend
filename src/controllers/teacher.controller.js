@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Event } from "../models/event.model.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import {EventRegistration} from "../models/registration.model.js"
 import getKeywords from "../ML models/keybert.js";
 
 const options={
@@ -157,4 +158,20 @@ const createEvent=asyncHandler(async(req,res)=>{
       new ApiResponse(200,createdEvent,"Event Created Successfully")
     )
 })
-export {registerTeacher,createEvent,loginTeacher,logoutTeacher};
+
+const getAllCreatedEvents=asyncHandler(async(req,res)=>{
+  const events=await Event.find({createdBy:req.user._id}).sort({createdAt:-1});
+  return res.status(200).json(
+    new ApiResponse(200,events,"Events fetched successfully")
+  )
+})
+const getAllRegistrations=asyncHandler(async(req,res)=>{
+  const eventId=req.body.eventId;
+  const registrations = await EventRegistration.find({
+    event: eventId,
+  }).populate("student", "Name email");
+  return res.status(200,registrations,"Registrations fetched")
+})
+
+
+export {registerTeacher,createEvent,loginTeacher,logoutTeacher,getAllCreatedEvents,getAllRegistrations};

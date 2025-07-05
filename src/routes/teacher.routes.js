@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerTeacher,createEvent,loginTeacher,logoutTeacher} from "../controllers/teacher.controller.js";
+import { registerTeacher,createEvent,loginTeacher,logoutTeacher,getAllCreatedEvents,getAllRegistrations} from "../controllers/teacher.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -16,5 +16,7 @@ router.route("/createEvent").post(verifyJWT,upload.fields([
     maxCount:1
   }
 ]),createEvent);
+router.route("/getAllCreatedEvents").get(verifyJWT,getAllCreatedEvents);
+router.route("/getAllRegistrations").get(verifyJWT,getAllRegistrations);
 
 export default router;
